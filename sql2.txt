@@ -1,0 +1,203 @@
+1) combien d'animaux sont tatoué?
+
+SELECT COUNT(tatouag) AS 'animaux tatoué'
+FROM animal
+where tatouag <>'';
+
+2) INSERT INTO consultation
+VALUES (19, "2012-01-15", '09:10', null, 2, 12);
+
+INSERT INTO consultation
+VALUES (20, "2013-01-15", '10:10', 0, 2, 12);
+
+3) afficher pour chaque race son nom et son poid en gramme?
+
+SELECT nomr, poids*1000 as 'poids en gramme'
+FROM race;
+
+4) afficher pour chaque race son nom et son poids gros ou pas (o si faux/1 si vraie)?
+
+SELECT nomr, if(poids>10, '1', '0') as 'gros ou pas(0/1)'
+FROM race;
+
+SELECT nomr, if(poids>10, 'gros', 'pas gros') as 'gros ou pas(0/1)'
+FROM race;
+
+5) afficher pour chaque animal son nom et le nom de sa race
+
+SELECT noma, nomr
+FROM animal, race
+WHERE animal.numr= race.numr;
+
+
+6)afficher pour chaque animal le num et date de leur consultation par ordre alphabetique 
+  numc
+
+SELECT animal.numa, numc, datec
+FROM animal, consultation
+WHERE animal.numa = consultation.numa
+ORDER BY 2;
+
+7) afficher les noms des animaux qui n'ont pas de consultation
+
+SELECT noma
+FROM animal
+WHERE numa NOT IN (SELECT numa FROM consultation);
+
+OU
+
+SELECT noma
+FROM animal
+WHERE NOT existe (SELECT numa FROM consultat WHERE cosultation.numa= animal.numa);
+
+OU
+
+jointure externe (sans right ou left fait la jointure)
+
+SELECT *
+FROM animal
+LEFT JOIN consultation ON animal.numa = consultation.numa;
+
+SELECT *
+FROM consultation
+RIGHT JOIN animal ON consultation.numa = animal.numa;
+
+SELECT *
+FROM animal
+LEFT JOIN consultation ON animal.numa= consultation.numa
+where consultation.numa IS NULL;
+
+8) afficher pour chaque consultation de l'année 2000, les noms des soins pratiqués ainsi que le nom des médicaments préscrits
+
+SELECT noms, datec
+FROM  consultation, pratiquer, prescrire, soin, medicament 
+WHERE pratiquer.numc = consultation.numc
+AND pratiquer.nums = soin.nums
+AND prescrire.numm = medicament.numm
+AND datec LIKE '2000-%-%'
+GROUP BY 2;
+
+--------------------------------
+cours les vues
+
+resultat du requete 
+c'est une table virtuelle: pas stokage physique des infor qui la constitut
+ce qui est stoker c'est la définition de la vues c'est a dire le select du create view
+
+type de vue=
+
+-vertical: selection de colonne d'une table
+
+-horizontal:selection de ligne d'une table
+
+-mixte: toute les autre vues 
+
+sintaxe
+
+create view mon vue[{ monchamp 1, monchamp 2,....}]
+as  select {*
+            monchamp 1, monchamp 2...}
+     from ....
+     [where.....];
+
+sert a
+-confidentialiter
+
+
+ajouter par defaut sec@localhost
+
+exo :
+
+create view consultsec
+ as select numc,datec,heure,numv,numa
+from consultation;
+
+selection vie=
+select * from consultsec;
+
+autorise les droits de selectionner
+GRANT select
+on consultsec
+to 'sec'@'localhost';
+
+insert into consultsec 
+values (100,'2012-11-30','10:00',2,2);
+
+dans proprieter url alouter -u pc ou sec-p
+
+select * from consultsec;
+
+cree nouvelle utilisateur
+
+create user pc;
+
+create view pc as select * from consultation where numv=1;
+
+
+GRANT select , insert 
+on pc
+to 'pc'@'localhost';
+
+select * from pc;
+
+insert into pc
+values (111, '2012-9-30', '11:00', 100, 1,2);
+
+
+nouvelle view
+create view consultpc2 as select * from consultation where numv=1 with check option;
+
+
+insert into consultpc2
+values (111, '2012-9-30', '11:00', 100, 2,2);
+
+affiche erreur check option;
+
+
+create view consultpc3 as select numc,datec,heure,consultation.numV,numa 
+from consultation , veterinaire  
+where consultation.numv=veterinaire.numv 
+and nOmv='carre'
+and premon='paul';
+-----------------------------------------------------------------------
+-----------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
